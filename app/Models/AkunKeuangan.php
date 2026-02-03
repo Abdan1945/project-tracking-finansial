@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AkunKeuangan extends Model
 {
@@ -14,14 +14,14 @@ class AkunKeuangan extends Model
     protected $table = 'akun_keuangan';
 
     protected $fillable = [
-        'nama_akun',
-        'jenis', // 'tunai', 'bank', atau 'e-wallet'
-        'saldo_awal',
         'user_id',
-    ];
+        'nama_akun',
+        'jenis',        // tunai | bank | e-wallet
+        'saldo_awal',
+    ];  
 
     /**
-     * Relasi: Akun ini milik seorang user.
+     * Akun dimiliki oleh user
      */
     public function user(): BelongsTo
     {
@@ -29,10 +29,11 @@ class AkunKeuangan extends Model
     }
 
     /**
-     * Relasi: Satu akun bisa memiliki banyak catatan transaksi.
+     * Akun punya banyak transaksi
      */
     public function transaksi(): HasMany
     {
-        return $this->hasMany(Transaksi::class, 'akun_id');
+        // Sesuaikan 'akun_keuangan_id' agar sama dengan yang ada di tabel transaksi
+        return $this->hasMany(Transaksi::class, 'akun_keuangan_id');
     }
 }

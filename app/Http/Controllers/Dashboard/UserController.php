@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
@@ -7,13 +8,15 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-
     public function index()
     {
         $title = 'Delete User!';
         $text  = "Are you sure you want to delete?";
         confirmDelete($title, $text);
-        $users = User::all();
+
+        // UBAH: Gunakan paginate() bukan all() agar method firstItem() dan links() di view bekerja
+        $users = User::latest()->paginate(10); 
+
         return view('dashboard.users.index', compact('users'));
     }
 
@@ -36,15 +39,10 @@ class UserController extends Controller
 
         session()->flash("toast_notification", [
             "level"   => "success",
-            "message" => "Data Successfully Created",
+            "message" => "Data Berhasil Dibuat",
         ]);
 
         return redirect()->route('dashboard.users.index');
-    }
-
-    public function show(string $id)
-    {
-        //
     }
 
     public function edit(string $id)
@@ -70,10 +68,12 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+
         session()->flash("toast_notification", [
             "level"   => "success",
-            "message" => "Data Successfully Edited",
+            "message" => "Data Berhasil Diperbarui",
         ]);
+
         return redirect()->route('dashboard.users.index');
     }
 
@@ -81,10 +81,12 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+
         session()->flash("toast_notification", [
             "level"   => "success",
-            "message" => "Data Successfully Deleted",
+            "message" => "Data Berhasil Dihapus",
         ]);
+
         return redirect()->route('dashboard.users.index');
     }
 }

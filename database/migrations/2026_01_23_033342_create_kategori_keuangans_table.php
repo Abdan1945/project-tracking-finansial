@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('kategori_keuangan', function (Blueprint $table) {
-    $table->id();
-    $table->string('nama');
-    $table->enum('tipe', ['pemasukan', 'pengeluaran']);
-    $table->timestamps();
-});
+        Schema::create('kategori_keuangan', function (Blueprint $table) {
+            $table->id();
+            // 1. Tambahkan kolom user_id agar sinkron dengan Controller
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            
+            // 2. Sesuaikan nama kolom dengan fillable di Model
+            $table->string('nama_kategori'); 
+            $table->enum('jenis', ['pemasukan', 'pengeluaran']); 
+            
+            $table->timestamps();
+        });
     }
 
     /**

@@ -1,156 +1,129 @@
-@extends('layouts.dashboard')
+@extends('layouts.app') {{-- Pastikan extends ke layout yang baru saja kita buat --}}
 
 @section('content')
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<div class="space-y-8 animate__animated animate__fadeIn">
+    {{-- Header Section --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Financial Intelligence</h2>
+            <p class="text-sm text-slate-500 font-medium">Pantau arus kas dan efisiensi pengeluaran Anda secara real-time.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
+                Export Report
+            </button>
+            <button class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">
+                + Transaksi Baru
+            </button>
+        </div>
+    </div>
 
-<style>
-    :root { --primary-font: 'Plus Jakarta Sans', sans-serif; --soft-bg: #f8f9fc; }
-    body { font-family: var(--primary-font); background-color: var(--soft-bg); color: #2d3436; }
-    
-    .stat-card { border: none; border-radius: 24px; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-    .stat-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
-
-    .bg-gradient-expense { background: linear-gradient(135deg, #ff8a71 0%, #ee5253 100%); }
-    .bg-gradient-income { background: linear-gradient(135deg, #4ee3ae 0%, #10b981 100%); }
-    .bg-gradient-balance { background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%); }
-
-    .glass-icon { width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-    
-    .chart-box { border-radius: 24px; background: #fff; padding: 24px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-
-    .custom-table { border-collapse: separate; border-spacing: 0 10px; }
-    .custom-table tr { background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.02); border-radius: 12px; }
-    .custom-table td { border: none; padding: 15px; }
-</style>
-
-<div class="container-xxl flex-grow-1 container-p-y">
-    
-    <div class="row g-4 mb-4">
-        <div class="col-lg-4 col-md-6" data-aos="fade-up">
-            <div class="card stat-card bg-gradient-expense text-white shadow">
-                <div class="card-body p-4">
-                    <div class="glass-icon mb-3"><i class="bx bx-trending-down fs-3"></i></div>
-                    <p class="mb-1 opacity-75 fw-medium">Total Pengeluaran</p>
-                    <h3 class="text-white fw-bold mb-0">Rp {{ number_format($total_pengeluaran, 0, ',', '.') }}</h3>
+    {{-- Stats Cards Section --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] hover:shadow-indigo-100 hover:shadow-2xl transition-all duration-500">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                    <i class='bx bx-trending-up text-2xl'></i>
                 </div>
+                <span class="text-[10px] font-black text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full">INCOME</span>
             </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Pemasukan</p>
+            <h3 class="text-2xl font-black text-slate-800 mt-1">
+                <span class="text-slate-400 text-sm font-medium italic">Rp</span> 
+                {{ number_format($totalMasuk ?? 0, 0, ',', '.') }}
+            </h3>
         </div>
 
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="card stat-card bg-gradient-income text-white shadow">
-                <div class="card-body p-4">
-                    <div class="glass-icon mb-3"><i class="bx bx-trending-up fs-3"></i></div>
-                    <p class="mb-1 opacity-75 fw-medium">Total Pemasukan</p>
-                    <h3 class="text-white fw-bold mb-0">Rp {{ number_format($total_pemasukan, 0, ',', '.') }}</h3>
+        <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] hover:shadow-rose-100 hover:shadow-2xl transition-all duration-500">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
+                    <i class='bx bx-trending-down text-2xl'></i>
                 </div>
+                <span class="text-[10px] font-black text-rose-500 bg-rose-50 px-3 py-1 rounded-full">EXPENSE</span>
             </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Pengeluaran</p>
+            <h3 class="text-2xl font-black text-slate-800 mt-1">
+                <span class="text-slate-400 text-sm font-medium italic">Rp</span> 
+                {{ number_format($totalKeluar ?? 0, 0, ',', '.') }}
+            </h3>
         </div>
 
-        <div class="col-lg-4 col-md-12" data-aos="fade-up" data-aos-delay="200">
-            <div class="card stat-card bg-gradient-balance text-white shadow-lg">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="glass-icon"><i class="bx bx-wallet fs-3"></i></div>
-                        <span class="badge bg-white text-primary rounded-pill px-3">Net Worth</span>
+        <div class="group bg-slate-900 p-6 rounded-[2rem] shadow-xl hover:shadow-indigo-500/20 transition-all duration-500 relative overflow-hidden">
+            <div class="relative z-10 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-indigo-400">
+                        <i class='bx bx-wallet text-2xl'></i>
                     </div>
-                    <p class="mb-1 opacity-75 fw-medium">Saldo Akhir</p>
-                    <h2 class="text-white fw-bold mb-0">Rp {{ number_format($total_saldo, 0, ',', '.') }}</h2>
+                    <span class="text-[10px] font-black text-indigo-300 bg-white/10 px-3 py-1 rounded-full uppercase tracking-tighter">Net Worth</span>
                 </div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Saldo Akhir</p>
+                <h3 class="text-2xl font-black mt-1">
+                    <span class="text-slate-500 text-sm font-medium italic">Rp</span> 
+                    {{ number_format(($totalMasuk ?? 0) - ($totalKeluar ?? 0), 0, ',', '.') }}
+                </h3>
             </div>
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-3xl"></div>
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8" data-aos="fade-right">
-            <div class="chart-box h-100">
-                <h5 class="fw-bold mb-4">Analisis Arus Kas Bulanan</h5>
-                <div style="height: 300px;"><canvas id="cashFlowChart"></canvas></div>
-            </div>
+    {{-- Recent Transactions Section --}}
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div class="p-8 flex items-center justify-between border-b border-slate-50">
+            <h3 class="text-lg font-black text-slate-800 tracking-tight">Transaksi Terakhir</h3>
+            <a href="#" class="text-xs font-bold text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors">Lihat Semua</a>
         </div>
-        <div class="col-lg-4" data-aos="fade-left">
-            <div class="card border-0 rounded-4 shadow-sm p-4 h-100">
-                <h5 class="fw-bold mb-4">Aksi Cepat</h5>
-                <div class="d-grid gap-3">
-                    <button class="btn btn-label-success py-3 rounded-3 border-0 text-start d-flex align-items-center">
-                        <i class="bx bx-plus-circle fs-4 me-3"></i> <div><b class="d-block">Pemasukan</b><small>Catat uang masuk</small></div>
-                    </button>
-                    <button class="btn btn-label-danger py-3 rounded-3 border-0 text-start d-flex align-items-center">
-                        <i class="bx bx-minus-circle fs-4 me-3"></i> <div><b class="d-block">Pengeluaran</b><small>Catat uang keluar</small></div>
-                    </button>
-                    <button class="btn btn-label-secondary py-3 rounded-3 border-0 text-start d-flex align-items-center">
-                        <i class="bx bx-file fs-4 me-3"></i> <div><b class="d-block">Ekspor Laporan</b><small>PDF / Excel</small></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-5" data-aos="fade-up">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold m-0">Riwayat Transaksi</h5>
-                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">Lihat Semua</a>
-            </div>
-            <div class="table-responsive">
-                <table class="table custom-table align-middle">
-                    <thead>
-                        <tr class="text-muted small">
-                            <th class="ps-4">DESKRIPSI</th>
-                            <th>KATEGORI</th>
-                            <th>TANGGAL</th>
-                            <th class="text-end pe-4">JUMLAH</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $trx)
-                        <tr>
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar me-3 bg-light rounded-pill p-2 text-center" style="width: 40px; height: 40px;">
-                                        <i class="bx {{ $trx->jenis == 'pemasukan' ? 'bx-up-arrow-alt text-success' : 'bx-down-arrow-alt text-danger' }} fs-4"></i>
-                                    </div>
-                                    <div><span class="fw-bold text-dark d-block">{{ $trx->keterangan }}</span><small class="text-muted text-capitalize">{{ $trx->jenis }}</small></div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tanggal</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Deskripsi / Jenis</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 text-sm">
+                    @forelse ($transaksiTerbaru ?? [] as $t)
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-8 py-5">
+                            <span class="font-bold text-slate-700">{{ \Carbon\Carbon::parse($t->tanggal)->format('d M Y') }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center {{ $t->jenis == 'masuk' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
+                                    <i class='bx {{ $t->jenis == 'masuk' ? 'bx-plus-circle' : 'bx-minus-circle' }}'></i>
                                 </div>
-                            </td>
-                            <td><span class="badge bg-label-secondary rounded-pill">{{ $trx->kategori->nama ?? 'Umum' }}</span></td>
-                            <td class="text-muted fw-medium">{{ $trx->tanggal->format('d M Y') }}</td>
-                            <td class="text-end pe-4 fw-bold {{ $trx->jenis == 'pemasukan' ? 'text-success' : 'text-danger' }}">
-                                {{ $trx->jenis == 'pemasukan' ? '+' : '-' }} Rp {{ number_format($trx->jumlah, 0, ',', '.') }}
-                            </td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="4" class="text-center py-5 text-muted">Belum ada data transaksi.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                <span class="capitalize font-semibold text-slate-600">{{ $t->jenis }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 text-right font-black {{ $t->jenis == 'masuk' ? 'text-emerald-500' : 'text-rose-500' }}">
+                            {{ $t->jenis == 'masuk' ? '+' : '-' }} Rp {{ number_format($t->jumlah, 0, ',', '.') }}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center opacity-30">
+                                <i class='bx bx-data text-5xl mb-4'></i>
+                                <p class="text-xs font-bold uppercase tracking-[0.3em]">Belum ada data transaksi</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({ duration: 800, once: true });
-
-        const ctx = document.getElementById('cashFlowChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($grafik_data->pluck('bulan')) !!},
-                datasets: [
-                    { label: 'Masuk', data: {!! json_encode($grafik_data->pluck('masuk')) !!}, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4, borderWidth: 3 },
-                    { label: 'Keluar', data: {!! json_encode($grafik_data->pluck('keluar')) !!}, borderColor: '#ee5253', backgroundColor: 'rgba(238, 82, 83, 0.1)', fill: true, tension: 0.4, borderWidth: 3 }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
-                scales: { y: { beginAtZero: true, grid: { borderDash: [5, 5] } }, x: { grid: { display: false } } }
-            }
-        });
-    });
-</script>
+<style>
+    /* Mikro Animasi */
+    .animate__fadeIn {
+        animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 @endsection
