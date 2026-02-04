@@ -1,116 +1,99 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('content')
-<div class="space-y-8 animate__animated animate__fadeIn">
-    {{-- Header & Action Section --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Manajemen Pengguna</h2>
-            <p class="text-sm text-slate-500 font-medium">Kelola hak akses dan informasi pengguna aplikasi Anda.</p>
+<div class="container-xxl flex-grow-1 container-p-y">
+    {{-- Header Section --}}
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h4 class="fw-bold py-3 mb-2">
+                <span class="text-muted fw-light">Manajemen /</span> Pengguna
+            </h4>
+            <p class="text-muted">Kelola akses sistem dan akun pengguna dalam satu panel.</p>
         </div>
-        <div>
-            <a href="{{ route('dashboard.users.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all no-underline">
-                <i class='bx bx-user-plus text-lg'></i>
-                Tambah User
+        <div class="col-md-6 text-md-end">
+            {{-- Tombol Biru Solid Bawaan Sneat --}}
+            <a href="{{ route('dashboard.users.create') }}" class="btn btn-primary btn-lg shadow-sm" style="border-radius: 12px;">
+                <i class="bx bx-user-plus me-1"></i> Tambah Pengguna
             </a>
         </div>
     </div>
 
-    {{-- Main Table Card --}}
-    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">No</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Info Pengguna</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Role / Jabatan</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse ($users as $index => $user)
-                    <tr class="hover:bg-slate-50/80 transition-all group">
-                        {{-- No --}}
-                        <td class="px-8 py-6">
-                            <span class="text-sm font-bold text-slate-400">#{{ $users->firstItem() + $index }}</span>
-                        </td>
+    {{-- User List Section --}}
+    <div class="row">
+        @forelse ($users as $index => $user)
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-none border hover-shadow transition-all" style="border-radius: 20px;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        {{-- Avatar Icon --}}
+                        <div class="avatar avatar-md flex-shrink-0">
+                            <span class="avatar-initial rounded-circle {{ $user->role === 'admin' ? 'bg-label-primary' : 'bg-label-info' }}">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </span>
+                        </div>
+                        {{-- Badge Role --}}
+                        <span class="badge {{ $user->role === 'admin' ? 'bg-label-primary' : 'bg-label-secondary' }} rounded-pill">
+                            {{ strtoupper($user->role) }}
+                        </span>
+                    </div>
 
-                        {{-- Nama & Email --}}
-                        <td class="px-8 py-6">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-700 m-0 leading-tight">{{ $user->name }}</p>
-                                    <span class="text-xs text-slate-400 font-medium">{{ $user->email }}</span>
-                                </div>
-                            </div>
-                        </td>
+                    <h5 class="card-title mb-1 fw-bold">{{ $user->name }}</h5>
+                    <p class="card-text text-muted small mb-3">
+                        <i class="bx bx-envelope me-1"></i> {{ $user->email }}<br>
+                        <i class="bx bx-calendar me-1"></i> Terdaftar: {{ $user->created_at->format('d M Y') }}
+                    </p>
 
-                        {{-- Role --}}
-                        <td class="px-8 py-6">
-                            <div class="inline-flex items-center gap-2 px-3 py-1.5 {{ $user->role === 'admin' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-600' }} rounded-lg">
-                                <i class='bx {{ $user->role === 'admin' ? 'bx-shield-quarter' : 'bx-user' }}'></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">{{ $user->role }}</span>
-                            </div>
-                        </td>
+                    <hr class="my-3 opacity-50">
 
-                        {{-- Aksi --}}
-                        <td class="px-8 py-6 text-center">
-                            <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('dashboard.users.edit', $user->id) }}" class="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all no-underline">
-                                    <i class='bx bx-edit-alt text-lg'></i>
-                                </a>
-                                
-                                {{-- Proteksi agar admin pertama tidak bisa dihapus sembarangan --}}
-                                @if(!($loop->first && $user->role === 'admin'))
-                                <form action="{{ route('dashboard.users.destroy', $user->id) }}" method="POST" class="inline m-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-600 hover:text-white transition-all border-none cursor-pointer" onclick="return confirm('Hapus user ini?')">
-                                        <i class='bx bx-trash text-lg'></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="px-8 py-32 text-center">
-                            <div class="flex flex-col items-center">
-                                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
-                                    <i class='bx bx-group text-4xl'></i>
-                                </div>
-                                <h4 class="text-slate-800 font-black">Belum Ada User</h4>
-                                <p class="text-slate-400 text-sm">Data pengguna akan muncul di sini.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="action-buttons">
+                            <a href="{{ route('dashboard.users.edit', $user->id) }}" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="bx bx-edit-alt"></i> Edit
+                            </a>
+                            
+                            @if(!($loop->first && $user->role === 'admin'))
+                            <form action="{{ route('dashboard.users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus user ini?')">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                            @endif
+                        </div>
+                        <small class="text-muted">#{{ $users->firstItem() + $index }}</small>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        @if($users->hasPages())
-        <div class="p-8 border-t border-slate-50 bg-slate-50/30">
-            {{ $users->links() }}
+        @empty
+        <div class="col-12 text-center py-5">
+            <img src="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/img/illustrations/man-with-laptop-light.png" width="150" alt="empty">
+            <h5 class="mt-3">Belum ada pengguna</h5>
         </div>
-        @endif
+        @endforelse
+    </div>
+
+    {{-- Pagination --}}
+    <div class="d-flex justify-content-center mt-4">
+        {{ $users->links() }}
     </div>
 </div>
 
 <style>
-    .animate__fadeIn {
-        animation: fadeIn 0.8s ease-out;
+    /* Mengatasi konflik CSS agar tidak "jelek" lagi */
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        border-color: #696cff !important;
+        transition: all 0.3s ease;
     }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    /* Memperbaiki pagination Tailwind */
-    nav[role="navigation"] svg { width: 20px; display: inline; }
+    .bg-label-primary { background-color: #e7e7ff !important; color: #696cff !important; }
+    .bg-label-info { background-color: #d7f5fc !important; color: #03c3ec !important; }
+    .btn-primary { background-color: #696cff !important; border-color: #696cff !important; }
+    
+    /* Perbaikan Pagination */
+    nav[role="navigation"] svg { width: 20px; }
+    .pagination { justify-content: center; }
 </style>
 @endsection

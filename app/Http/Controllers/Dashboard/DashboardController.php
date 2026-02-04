@@ -10,16 +10,35 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    /**
+     * Menampilkan halaman utama dashboard dengan ringkasan data.
+     */
     public function index()
     {
         $userId = Auth::id();
 
-        // 1. Hitung Ringkasan Nominal
-        $total_pemasukan = Transaksi::where('user_id', $userId)->where('jenis', 'pemasukan')->sum('jumlah') ?? 0;
-        $total_pengeluaran = Transaksi::where('user_id', $userId)->where('jenis', 'pengeluaran')->sum('jumlah') ?? 0;
-        $total_saldo = $total_pemasukan - $total_pengeluaran;
+        // 1. Hitung Ringkasan Nominal (Untuk Widget Atas)
+        // Kita gunakan nama variabel camelCase agar rapi dan standar
+        $totalPemasukan = Transaksi::where('user_id', $userId)
+            ->where('jenis', 'pemasukan')
+            ->sum('jumlah') ?? 0;
 
-        // 2. Data Statistik Grafik (6 Bulan Terakhir)
+        $totalPengeluaran = Transaksi::where('user_id', $userId)
+            ->where('jenis', 'pengeluaran')
+            ->sum('jumlah') ?? 0;
+
+        $saldoAkhir = $totalPemasukan - $totalPengeluaran;
+
+        // 2. Ambil 5 Transaksi Terakhir dengan Eager Loading
+        // Penting: Nama relasi harus sesuai dengan yang ada di Model Transaksi
+        $transactions = Transaksi::with(['kategori_keuangan', 'akun_keuangan'])
+            ->where('user_id', $userId)
+            ->latest('tanggal')
+            ->latest('id') // Menghindari duplikasi urutan jika tanggal sama
+            ->take(5)
+            ->get();
+
+        // 3. Data Statistik Grafik (Data per bulan)
         $grafik_data = Transaksi::where('user_id', $userId)
             ->select(
                 DB::raw("DATE_FORMAT(tanggal, '%b') as bulan"),
@@ -30,25 +49,19 @@ class DashboardController extends Controller
             ->orderBy(DB::raw("MONTH(tanggal)"), 'asc')
             ->get();
 
-        // 3. Ambil 8 Transaksi Terakhir
-        $transactions = Transaksi::with('kategori')
-            ->where('user_id', $userId)
-            ->latest('tanggal')
-            ->take(8)
-            ->get();
-
+        // 4. Kirim data ke view
         return view('dashboard.index', compact(
-            'total_pemasukan', 
-            'total_pengeluaran', 
-            'total_saldo', 
+            'totalPemasukan', 
+            'totalPengeluaran', 
+            'saldoAkhir', 
             'transactions', 
             'grafik_data'
         ));
     }
 
-    // Method resource lainnya (kosongkan dulu tidak apa-apa)
-    public function create() { return view('dashboard.create'); }
-    public function store(Request $request) { }
+    // Method resource lainnya bisa kamu isi nanti sesuai kebutuhan CRUD
+    public function create() { return view('dashboard.transaksi.create'); }
+    public function store(Request $request) { /* Logika simpan di sini */ }
     public function show(string $id) { }
     public function edit(string $id) { }
     public function update(Request $request, string $id) { }

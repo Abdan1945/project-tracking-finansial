@@ -1,117 +1,101 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-white border-end-0 shadow-sm" style="width: 280px;">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-white d-flex flex-column" 
+    style="width: 260px; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1100; border-right: 1px solid #eef2f6; box-shadow: none !important;">
+    
     {{-- LOGO SECTION --}}
-    <div class="app-brand demo d-flex align-items-center px-4" style="height: 100px;">
-        <a href="{{ route('dashboard.index') }}" class="app-brand-link gap-2">
-            <span class="app-brand-logo demo">
-                <div class="p-2 rounded-3 bg-primary shadow-primary">
-                    {{-- Icon Grafik yang lebih modern untuk Finansial --}}
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="20" x2="12" y2="10"></line>
-                        <line x1="18" y1="20" x2="18" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="16"></line>
-                    </svg>
-                </div>
-            </span>
-            <div class="d-flex flex-column">
-                <span class="app-brand-text demo menu-text fw-black text-dark tracking-tight" style="font-size: 1.5rem; line-height: 1;">FINA<span class="text-primary">NCE</span></span>
-                <span class="text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">SMART TRACKER</span>
+    <div class="app-brand demo d-flex align-items-center px-4" style="height: 100px; min-height: 100px;">
+        <a href="{{ route('dashboard.index') }}" class="app-brand-link d-flex align-items-center text-decoration-none">
+            <div class="logo-icon-wrapper d-flex align-items-center justify-content-center shadow-sm" 
+                 style="width: 40px; height: 40px; background: #696cff; border-radius: 12px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20V10"></path>
+                    <path d="M18 20V4"></path>
+                    <path d="M6 20V16"></path>
+                </svg>
+            </div>
+            <div class="ms-3 d-flex flex-column">
+                <span class="fw-bold text-dark" style="font-size: 1.2rem; line-height: 1.1; letter-spacing: -0.5px;">Finance</span>
+                <small class="text-muted fw-medium" style="font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;">Smart Tracker</small>
             </div>
         </a>
     </div>
 
+    {{-- MENU SECTION --}}
     <div class="menu-inner-shadow"></div>
-
-    <ul class="menu-inner py-3 px-3">
-        {{-- OVERVIEW (Ditambahkan agar lengkap seperti di foto) --}}
+    <ul class="menu-inner py-3 px-3 flex-grow-1 overflow-auto" style="list-style: none; margin: 0;">
         <li class="menu-item {{ Request::is('dashboard') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.index') }}" class="menu-link rounded-4 py-3">
-                <i class="menu-icon bx bx-grid-alt fs-4"></i>
-                <div class="fw-bold">Overview</div>
+            <a href="{{ route('dashboard.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
+                <i class="menu-icon bx bx-grid-alt fs-5 me-3"></i>
+                <div class="fw-bold">Dashboard</div>
             </a>
         </li>
 
-        {{-- TRANSAKSI --}}
         <li class="menu-item {{ Request::is('dashboard/transaksi*') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.transaksi.index') }}" class="menu-link rounded-4 py-3">
-                <i class="menu-icon bx bx-transfer-alt fs-4"></i>
+            <a href="{{ route('dashboard.transaksi.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
+                <i class="menu-icon bx bx-transfer-alt fs-5 me-3"></i>
                 <div class="fw-bold">Transaksi</div>
             </a>
         </li>
 
-        {{-- MANAGEMENT HEADER --}}
-        <li class="menu-header small text-uppercase my-4">
-            <span class="menu-header-text fw-black text-muted tracking-widest" style="font-size: 0.7rem;">Management</span>
+        <li class="menu-header small text-uppercase my-4 px-3">
+            <span class="text-muted fw-bold opacity-50" style="font-size: 0.65rem; letter-spacing: 1.5px;">Management</span>
         </li>
 
-        {{-- KATEGORI --}}
+        @if (Auth::user()->is_admin == 1)
         <li class="menu-item {{ Request::is('dashboard/kategori-keuangan*') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.kategori-keuangan.index') }}" class="menu-link rounded-4 py-3">
-                <i class="menu-icon bx bx-category fs-4"></i>
+            <a href="{{ route('dashboard.kategori-keuangan.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
+                <i class="menu-icon bx bx-category fs-5 me-3"></i>
                 <div class="fw-bold">Kategori</div>
             </a>
         </li>
-
-        {{-- AKUN/REKENING --}}
+        @endif
+        
         <li class="menu-item {{ Request::is('dashboard/akun-keuangan*') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.akun-keuangan.index') }}" class="menu-link rounded-4 py-3">
-                <i class="menu-icon bx bx-credit-card fs-4"></i>
+            <a href="{{ route('dashboard.akun-keuangan.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
+                <i class="menu-icon bx bx-credit-card fs-5 me-3"></i>
                 <div class="fw-bold">Akun/Rekening</div>
             </a>
         </li>
 
-        {{-- USER MANAGEMENT --}}
-        <li class="menu-item {{ Request::is('dashboard/users*') ? 'active' : '' }} mb-4">
-            <a href="{{ route('dashboard.users.index') }}" class="menu-link rounded-4 py-3">
-                <i class="menu-icon bx bx-user-circle fs-4"></i>
+        <li class="menu-item {{ Request::is('dashboard/users*') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.users.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
+                <i class="menu-icon bx bx-user-circle fs-5 me-3"></i>
                 <div class="fw-bold">Manajemen User</div>
             </a>
         </li>
+    </ul>
 
-        {{-- USER PROFILE CARD --}}
-        <div class="mt-auto p-3 rounded-5 bg-dark mb-2 shadow-lg mx-1">
-            <div class="d-flex align-items-center mb-3">
-                <div class="avatar avatar-md me-3">
-                    <span class="avatar-initial rounded-3 bg-primary fw-bold text-uppercase">{{ substr(Auth::user()->name, 0, 2) }}</span>
-                </div>
-                <div class="user-info">
-                    <h6 class="text-white mb-0 fw-bold">{{ Auth::user()->name }}</h6>
-                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.6rem; letter-spacing: 1px;">Administrator</small>
+    {{-- PROFILE & LOGOUT (Tanpa Card Hitam) --}}
+    <div class="mt-auto border-top p-4 bg-white">
+        <div class="d-flex align-items-center mb-4">
+            <div class="flex-shrink-0">
+                <div class="avatar-initial rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" 
+                     style="width: 42px; height: 42px; background: #696cff; font-size: 0.85rem;">
+                    {{ substr(Auth::user()->name, 0, 2) }}
                 </div>
             </div>
-            
-            <form action="{{ route('dashboard.logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100 rounded-4 fw-black py-2 text-uppercase tracking-widest" style="font-size: 0.75rem;">
-                    Logout
-                </button>
-            </form>
+            <div class="ms-3 overflow-hidden text-start">
+                <h6 class="mb-0 fw-bold text-dark text-truncate" style="font-size: 0.9rem;">{{ Auth::user()->name }}</h6>
+                <small class="text-muted fw-medium" style="font-size: 0.75rem;">Administrator</small>
+            </div>
         </div>
-    </ul>
+        
+        <form action="{{ route('dashboard.logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-label-danger w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center" 
+                style="font-size: 0.75rem; background-color: #fff5f5; color: #ff3e1d; border: none;">
+                <i class="bx bx-log-out me-2"></i> LOGOUT
+            </button>
+        </form>
+    </div>
 </aside>
 
 <style>
-    /* Custom Styling sesuai gambar */
-    .menu-vertical .menu-item.active > .menu-link {
-        background-color: #5544FF !important; /* Warna ungu brand */
-        color: #fff !important;
-        box-shadow: 0 10px 20px -5px rgba(85, 68, 255, 0.4);
+    /* CSS Warna Item Aktif */
+    .menu-item.active .menu-link {
+        background: #f0f0ff !important;
+        color: #696cff !important;
     }
-    .menu-vertical .menu-item.active i {
-        color: #fff !important;
-    }
-    .menu-link {
-        color: #64748b !important;
-        transition: all 0.3s ease;
-    }
-    .menu-link:hover {
-        background-color: #f8fafc !important;
-        transform: translateX(5px); /* Animasi geser sedikit saat hover */
-    }
-    .fw-black { font-weight: 900 !important; }
-    .tracking-widest { letter-spacing: 0.15em !important; }
-    .tracking-tight { letter-spacing: -0.05em !important; }
-    .shadow-primary { box-shadow: 0 8px 15px -3px rgba(105, 108, 255, 0.4); }
-    .bg-dark { background-color: #0F172A !important; } 
-    .avatar-initial { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
-    .text-primary { color: #5544FF !important; } /* Menyelaraskan warna teks dengan brand */
+    .menu-item.active i { color: #696cff !important; }
+    .menu-link { color: #64748b; transition: all 0.2s; }
+    .menu-link:hover { background: #f8fafc; color: #696cff; }
 </style>

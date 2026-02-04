@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('content')
 <div class="max-w-4xl mx-auto">
@@ -47,7 +47,7 @@
 
                 {{-- Saldo Awal --}}
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Saldo Awal</label>
+                    <label class="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Total Saldo</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-sm z-10">Rp</span>
                         <input type="number" name="saldo_awal" required placeholder="0"

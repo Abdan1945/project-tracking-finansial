@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('content')
 <div class="max-w-6xl mx-auto">
@@ -21,7 +21,7 @@
                     <tr class="bg-slate-50/50">
                         <th class="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Nama Akun</th>
                         <th class="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Jenis</th>
-                        <th class="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em] text-right">Saldo Awal</th>
+                        <th class="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em] text-right">Total Saldo</th>
                         <th class="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-[0.2em] text-center">Aksi</th>
                     </tr>
                 </thead>

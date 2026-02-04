@@ -1,111 +1,148 @@
-@extends('layouts.app') {{-- Pastikan extends ke layout yang baru saja kita buat --}}
+@extends('layouts.dashboard')
 
 @section('content')
-<div class="space-y-8 animate__animated animate__fadeIn">
+<div class="container-xxl flex-grow-1 container-p-y">
     {{-- Header Section --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Financial Intelligence</h2>
-            <p class="text-sm text-slate-500 font-medium">Pantau arus kas dan efisiensi pengeluaran Anda secara real-time.</p>
+    <div class="row align-items-center mb-5 animate__animated animate__fadeIn">
+        <div class="col-md-8">
+            <h2 class="display-6 fw-black text-dark mb-1 tracking-tight">Financial Intelligence</h2>
+            <p class="text-muted fw-medium mb-0">Pantau arus kas dan efisiensi pengeluaran Anda secara real-time.</p>
         </div>
-        <div class="flex items-center gap-3">
-            <button class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
-                Export Report
-            </button>
-            <button class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">
-                + Transaksi Baru
-            </button>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="d-flex gap-2 justify-content-md-end">
+                <button class="btn btn-white border shadow-sm px-4 fw-bold text-uppercase tracking-wider" style="border-radius: 12px; font-size: 11px;">
+                    Export Report
+                </button>
+                <a href="{{ route('dashboard.transaksi.index') }}" class="btn btn-primary shadow-primary px-4 fw-bold text-uppercase tracking-wider" style="border-radius: 12px; font-size: 11px; background: #696cff !important;">
+                    + Transaksi Baru
+                </a>
+            </div>
         </div>
     </div>
 
     {{-- Stats Cards Section --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] hover:shadow-indigo-100 hover:shadow-2xl transition-all duration-500">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                    <i class='bx bx-trending-up text-2xl'></i>
-                </div>
-                <span class="text-[10px] font-black text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full">INCOME</span>
-            </div>
-            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Pemasukan</p>
-            <h3 class="text-2xl font-black text-slate-800 mt-1">
-                <span class="text-slate-400 text-sm font-medium italic">Rp</span> 
-                {{ number_format($totalMasuk ?? 0, 0, ',', '.') }}
-            </h3>
-        </div>
-
-        <div class="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] hover:shadow-rose-100 hover:shadow-2xl transition-all duration-500">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
-                    <i class='bx bx-trending-down text-2xl'></i>
-                </div>
-                <span class="text-[10px] font-black text-rose-500 bg-rose-50 px-3 py-1 rounded-full">EXPENSE</span>
-            </div>
-            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Pengeluaran</p>
-            <h3 class="text-2xl font-black text-slate-800 mt-1">
-                <span class="text-slate-400 text-sm font-medium italic">Rp</span> 
-                {{ number_format($totalKeluar ?? 0, 0, ',', '.') }}
-            </h3>
-        </div>
-
-        <div class="group bg-slate-900 p-6 rounded-[2rem] shadow-xl hover:shadow-indigo-500/20 transition-all duration-500 relative overflow-hidden">
-            <div class="relative z-10 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-indigo-400">
-                        <i class='bx bx-wallet text-2xl'></i>
+    <div class="row mb-5 animate__animated animate__fadeIn">
+        {{-- Card Pemasukan --}}
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 hover-up" style="border-radius: 24px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded-3 bg-label-success p-2">
+                                <i class='bx bx-trending-up fs-3'></i>
+                            </span>
+                        </div>
+                        <span class="badge bg-label-success rounded-pill fw-black px-3" style="font-size: 9px;">INCOME</span>
                     </div>
-                    <span class="text-[10px] font-black text-indigo-300 bg-white/10 px-3 py-1 rounded-full uppercase tracking-tighter">Net Worth</span>
+                    <p class="text-muted fw-bold text-uppercase tracking-widest mb-1" style="font-size: 10px;">Total Pemasukan</p>
+                    <h3 class="fw-black mb-0 text-dark">
+                        <small class="text-muted fw-light font-italic">Rp</small> 
+                        {{ number_format($totalPemasukan ?? 0, 0, ',', '.') }}
+                    </h3>
                 </div>
-                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Saldo Akhir</p>
-                <h3 class="text-2xl font-black mt-1">
-                    <span class="text-slate-500 text-sm font-medium italic">Rp</span> 
-                    {{ number_format(($totalMasuk ?? 0) - ($totalKeluar ?? 0), 0, ',', '.') }}
-                </h3>
             </div>
-            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        {{-- Card Pengeluaran --}}
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 hover-up" style="border-radius: 24px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded-3 bg-label-danger p-2">
+                                <i class='bx bx-trending-down fs-3'></i>
+                            </span>
+                        </div>
+                        <span class="badge bg-label-danger rounded-pill fw-black px-3" style="font-size: 9px;">EXPENSE</span>
+                    </div>
+                    <p class="text-muted fw-bold text-uppercase tracking-widest mb-1" style="font-size: 10px;">Total Pengeluaran</p>
+                    <h3 class="fw-black mb-0 text-dark">
+                        <small class="text-muted fw-light font-italic">Rp</small> 
+                        {{ number_format($totalPengeluaran ?? 0, 0, ',', '.') }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card Saldo Akhir --}}
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden bg-dark text-white hover-up" style="border-radius: 24px; background: #232333 !important;">
+                <div class="card-body p-4 position-relative z-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded-3 bg-primary p-2">
+                                <i class='bx bx-wallet fs-3'></i>
+                            </span>
+                        </div>
+                        <span class="badge bg-label-primary rounded-pill fw-black px-3" style="font-size: 9px;">NET WORTH</span>
+                    </div>
+                    <p class="text-light opacity-50 fw-bold text-uppercase tracking-widest mb-1" style="font-size: 10px;">Saldo Akhir</p>
+                    <h3 class="fw-black mb-0 text-white">
+                        <small class="opacity-50 fw-light font-italic">Rp</small> 
+                        {{ number_format($saldoAkhir ?? 0, 0, ',', '.') }}
+                    </h3>
+                </div>
+                <div class="position-absolute end-0 bottom-0 p-3 opacity-10">
+                    <i class='bx bx-shield-alt-2 display-1'></i>
+                </div>
+            </div>
         </div>
     </div>
 
     {{-- Recent Transactions Section --}}
-    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
-        <div class="p-8 flex items-center justify-between border-b border-slate-50">
-            <h3 class="text-lg font-black text-slate-800 tracking-tight">Transaksi Terakhir</h3>
-            <a href="#" class="text-xs font-bold text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors">Lihat Semua</a>
+    <div class="card border-0 shadow-sm animate__animated animate__fadeInUp" style="border-radius: 24px;">
+        <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between p-4">
+            <h5 class="m-0 fw-black text-dark tracking-tight">Transaksi Terakhir</h5>
+            <a href="{{ route('dashboard.transaksi.index') }}" class="btn btn-sm btn-label-primary fw-bold text-uppercase px-3" style="font-size: 10px; border-radius: 8px;">
+                Lihat Semua
+            </a>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tanggal</th>
-                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Deskripsi / Jenis</th>
-                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Jumlah</th>
+        <div class="table-responsive text-nowrap p-2">
+            <table class="table table-hover align-middle border-0">
+                <thead class="bg-light border-0">
+                    <tr>
+                        <th class="ps-4 text-uppercase fw-black text-muted tracking-widest" style="font-size: 10px; border:none;">Tanggal</th>
+                        <th class="text-uppercase fw-black text-muted tracking-widest" style="font-size: 10px; border:none;">Deskripsi / Jenis</th>
+                        <th class="text-end pe-4 text-uppercase fw-black text-muted tracking-widest" style="font-size: 10px; border:none;">Jumlah</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50 text-sm">
-                    @forelse ($transaksiTerbaru ?? [] as $t)
-                    <tr class="hover:bg-slate-50/80 transition-colors group">
-                        <td class="px-8 py-5">
-                            <span class="font-bold text-slate-700">{{ \Carbon\Carbon::parse($t->tanggal)->format('d M Y') }}</span>
+                <tbody class="table-border-bottom-0">
+                    @forelse ($transactions ?? [] as $t)
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <span class="fw-bold text-dark">{{ $t->tanggal->format('d M Y') }}</span>
                         </td>
-                        <td class="px-8 py-5">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center {{ $t->jenis == 'masuk' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
-                                    <i class='bx {{ $t->jenis == 'masuk' ? 'bx-plus-circle' : 'bx-minus-circle' }}'></i>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar flex-shrink-0">
+                                    <span class="avatar-initial rounded-circle {{ $t->jenis == 'pemasukan' ? 'bg-label-success' : 'bg-label-danger' }}">
+                                        <i class='bx {{ $t->jenis == 'pemasukan' ? 'bx-plus-circle' : 'bx-minus-circle' }}'></i>
+                                    </span>
                                 </div>
-                                <span class="capitalize font-semibold text-slate-600">{{ $t->jenis }}</span>
+                                <div>
+                                    <p class="mb-0 fw-bold text-dark text-capitalize">
+                                        {{-- PERBAIKAN: Ubah 'nama' menjadi 'nama_kategori' --}}
+                                        {{ $t->kategori_keuangan->nama_kategori ?? 'Tanpa Kategori' }}
+                                    </p>
+                                    <small class="text-muted text-uppercase fw-medium" style="font-size: 9px;">
+                                        {{-- Jika ingin menampilkan nama Akun Keuangan (Bank/Cash) di bawah kategori --}}
+                                        {{ $t->akun_keuangan->nama_akun ?? $t->jenis }}
+                                    </small>
+                                </div>
                             </div>
                         </td>
-                        <td class="px-8 py-5 text-right font-black {{ $t->jenis == 'masuk' ? 'text-emerald-500' : 'text-rose-500' }}">
-                            {{ $t->jenis == 'masuk' ? '+' : '-' }} Rp {{ number_format($t->jumlah, 0, ',', '.') }}
+                        <td class="text-end pe-4">
+                            <h6 class="mb-0 fw-black {{ $t->jenis == 'pemasukan' ? 'text-success' : 'text-danger' }}">
+                                {{ $t->jenis == 'pemasukan' ? '+' : '-' }} Rp {{ number_format($t->jumlah, 0, ',', '.') }}
+                            </h6>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="px-8 py-20 text-center">
-                            <div class="flex flex-col items-center opacity-30">
-                                <i class='bx bx-data text-5xl mb-4'></i>
-                                <p class="text-xs font-bold uppercase tracking-[0.3em]">Belum ada data transaksi</p>
+                        <td colspan="3" class="text-center py-5">
+                            <div class="opacity-25 my-4">
+                                <i class='bx bx-data display-1'></i>
+                                <p class="fw-bold text-uppercase tracking-widest mt-2" style="font-size: 10px;">Belum ada data transaksi</p>
                             </div>
                         </td>
                     </tr>
@@ -117,13 +154,17 @@
 </div>
 
 <style>
-    /* Mikro Animasi */
-    .animate__fadeIn {
-        animation: fadeIn 0.6s ease-out;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    /* Reset & Luxury Overrides */
+    .fw-black { font-weight: 900 !important; }
+    .tracking-tight { letter-spacing: -0.5px; }
+    .tracking-widest { letter-spacing: 1.5px !important; }
+    .hover-up { transition: all 0.3s ease; }
+    .hover-up:hover { transform: translateY(-8px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
+    
+    .bg-label-success { background-color: #e8fadf !important; color: #71dd37 !important; }
+    .bg-label-danger { background-color: #ffe5e5 !important; color: #ff3e1d !important; }
+    .bg-label-primary { background-color: #e7e7ff !important; color: #696cff !important; }
+    
+    .table > :not(caption) > * > * { border-bottom-width: 0; padding: 1rem 0.5rem; }
 </style>
 @endsection

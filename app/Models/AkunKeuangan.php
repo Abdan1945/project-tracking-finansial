@@ -20,20 +20,15 @@ class AkunKeuangan extends Model
         'saldo_awal',
     ];  
 
-    /**
-     * Akun dimiliki oleh user
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Akun punya banyak transaksi
-     */
+    // Relasi ke Transaksi (PENTING untuk pengecekan sebelum hapus)
     public function transaksi(): HasMany
     {
-        // Sesuaikan 'akun_keuangan_id' agar sama dengan yang ada di tabel transaksi
-        return $this->hasMany(Transaksi::class, 'akun_keuangan_id');
+        // Menggunakan 'akun_id' sesuai dengan foreign key di database kamu
+        return $this->hasMany(Transaksi::class, 'akun_id');
     }
 }
