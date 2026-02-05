@@ -62,6 +62,7 @@
                 </div>
 
                 {{-- Bagian Kategori --}}
+                
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Kategori</label>
                     <div class="relative">
@@ -75,6 +76,7 @@
                         </select>
                     </div>
                 </div>
+               
 
                 {{-- Akun --}}
                 <div class="flex flex-col gap-2">

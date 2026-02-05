@@ -40,7 +40,8 @@
             <span class="text-muted fw-bold opacity-50" style="font-size: 0.65rem; letter-spacing: 1.5px;">Management</span>
         </li>
 
-        @if (Auth::user()->is_admin == 1)
+        @auth
+        @if (auth()->user()->role === 'admin')
         <li class="menu-item {{ Request::is('dashboard/kategori-keuangan*') ? 'active' : '' }}">
             <a href="{{ route('dashboard.kategori-keuangan.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
                 <i class="menu-icon bx bx-category fs-5 me-3"></i>
@@ -48,6 +49,7 @@
             </a>
         </li>
         @endif
+       @endauth
         
         <li class="menu-item {{ Request::is('dashboard/akun-keuangan*') ? 'active' : '' }}">
             <a href="{{ route('dashboard.akun-keuangan.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
@@ -56,12 +58,16 @@
             </a>
         </li>
 
+        @auth
+        @if (auth()->user()->role === 'admin')
         <li class="menu-item {{ Request::is('dashboard/users*') ? 'active' : '' }}">
             <a href="{{ route('dashboard.users.index') }}" class="menu-link rounded-3 py-2 px-3 d-flex align-items-center text-decoration-none mb-1">
                 <i class="menu-icon bx bx-user-circle fs-5 me-3"></i>
                 <div class="fw-bold">Manajemen User</div>
             </a>
         </li>
+        @endif
+       @endauth
     </ul>
 
     {{-- PROFILE & LOGOUT (Tanpa Card Hitam) --}}
@@ -75,7 +81,7 @@
             </div>
             <div class="ms-3 overflow-hidden text-start">
                 <h6 class="mb-0 fw-bold text-dark text-truncate" style="font-size: 0.9rem;">{{ Auth::user()->name }}</h6>
-                <small class="text-muted fw-medium" style="font-size: 0.75rem;">Administrator</small>
+                <small class="text-muted fw-medium" style="font-size: 0.75rem;">Online</small>
             </div>
         </div>
         
