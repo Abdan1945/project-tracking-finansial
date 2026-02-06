@@ -5,19 +5,19 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Tambahkan ini
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $title = 'Delete User!';
-        $text  = "Are you sure you want to delete?";
+        // Integration dengan SweetAlert (confirmDelete)
+        $title = 'Hapus User!';
+        $text  = "Apakah Anda yakin ingin menghapus user ini beserta seluruh datanya?";
         confirmDelete($title, $text);
 
         $users = User::latest()->paginate(10); 
-
         return view('dashboard.users.index', compact('users'));
     }
 
@@ -40,7 +40,7 @@ class UserController extends Controller
 
         session()->flash("toast_notification", [
             "level"   => "success",
-            "message" => "Data Berhasil Dibuat",
+            "message" => "User berhasil ditambahkan",
         ]);
 
         return redirect()->route('dashboard.users.index');
@@ -62,9 +62,7 @@ class UserController extends Controller
         ]);
 
         if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'string|min:8',
-            ]);
+            $request->validate(['password' => 'string|min:8']);
             $validated['password'] = bcrypt($request->password);
         }
 
@@ -72,7 +70,7 @@ class UserController extends Controller
 
         session()->flash("toast_notification", [
             "level"   => "success",
-            "message" => "Data Berhasil Diperbarui",
+            "message" => "Data user berhasil diperbarui",
         ]);
 
         return redirect()->route('dashboard.users.index');
@@ -82,42 +80,43 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Keamanan: Jangan biarkan admin menghapus dirinya sendiri
+        // Proteksi: Admin tidak boleh bunuh diri (hapus akun sendiri)
         if (Auth::id() == $user->id) {
             session()->flash("toast_notification", [
                 "level"   => "error",
-                "message" => "Anda tidak dapat menghapus akun sendiri!",
+                "message" => "Anda tidak dapat menghapus akun Anda sendiri!",
             ]);
             return redirect()->route('dashboard.users.index');
         }
 
         try {
-            // Gunakan Transaction agar jika satu gagal, semua dibatalkan
+            // Menggunakan DB Transaction agar aman jika terjadi kegagalan di tengah jalan
             DB::transaction(function () use ($user) {
-                // 1. Hapus semua transaksi melalui relasi akun
-                foreach ($user->akunKeuangan as $akun) {
-                    $akun->transaksi()->delete();
-                }
+                // URUTAN PENGHAPUSAN (PENTING):
+                
+                // 1. Hapus Transaksi (Karena transaksi merujuk ke akun, kategori, dan user)
+                $user->transaksi()->delete();
 
-                // 2. Hapus akun keuangan
+                // 2. Hapus Akun Keuangan
                 $user->akunKeuangan()->delete();
 
-                // 3. Hapus kategori keuangan
+                // 3. Hapus Kategori Keuangan
                 $user->kategoriKeuangan()->delete();
 
-                // 4. Baru hapus user-nya
+                // 4. Terakhir hapus User-nya
                 $user->delete();
             });
 
             session()->flash("toast_notification", [
                 "level"   => "success",
-                "message" => "User dan seluruh data terkait berhasil dihapus",
+                "message" => "User dan riwayat datanya berhasil dihapus permanen",
             ]);
 
         } catch (\Exception $e) {
+            // Jika masih gagal karena kendala database lainnya
             session()->flash("toast_notification", [
                 "level"   => "error",
-                "message" => "Gagal menghapus user: " . $e->getMessage(),
+                "message" => "Gagal menghapus user: Database Constraint Error.",
             ]);
         }
 
