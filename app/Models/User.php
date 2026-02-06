@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Tambahkan ini
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,11 +32,11 @@ class User extends Authenticatable
         ];
     }
 
-    // --- TAMBAHKAN RELASI BERDASARKAN DIAGRAM ---
+    // --- RELASI UNTUK PEMBERSIHAN DATA ---
 
     /**
-     * Relasi ke tabel akun_keuangan (One-to-Many).
-     * Seorang user bisa memiliki banyak akun (Bank, Tunai, e-Wallet).
+     * Relasi ke Akun Keuangan.
+     * Digunakan untuk menghapus akun sebelum user dihapus.
      */
     public function akunKeuangan(): HasMany
     {
@@ -44,8 +44,16 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke tabel transaksi (One-to-Many).
-     * Seorang user bisa mencatat banyak transaksi.
+     * Relasi ke Kategori Keuangan.
+     * PENTING: Tadi gagal kemungkinan karena relasi ini belum ada.
+     */
+    public function kategoriKeuangan(): HasMany
+    {
+        return $this->hasMany(KategoriKeuangan::class, 'user_id');
+    }
+
+    /**
+     * Relasi ke Transaksi secara langsung.
      */
     public function transaksi(): HasMany
     {

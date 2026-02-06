@@ -11,6 +11,7 @@ class AkunKeuanganController extends Controller
 {
     public function index()
     {
+        // Mengambil akun milik user yang login
         $akun = AkunKeuangan::where('user_id', Auth::id())->get();
         return view('akun-keuangan.index', compact('akun'));
     }
@@ -23,67 +24,78 @@ class AkunKeuanganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_akun' => 'required|string|max:255',
-            'jenis' => 'required|in:tunai,bank,e-wallet',
+            'nama_akun'  => 'required|string|max:255',
+            'jenis'      => 'required|in:tunai,bank,e-wallet',
             'saldo_awal' => 'required|numeric|min:0',
         ]);
 
         AkunKeuangan::create([
-            'user_id' => Auth::id(),
-            'nama_akun' => $request->nama_akun,
-            'jenis' => $request->jenis,
+            'user_id'    => Auth::id(),
+            'nama_akun'  => $request->nama_akun,
+            'jenis'      => $request->jenis,
             'saldo_awal' => $request->saldo_awal,
         ]);
 
         return redirect()->route('dashboard.akun-keuangan.index')
-            ->with('success', 'Akun berhasil ditambahkan!');
+            ->with('success', 'Akun keuangan berhasil ditambahkan!');
     }
 
-    public function show($id)
+    // Menggunakan Route Model Binding agar lebih ringkas
+    public function show(AkunKeuangan $akunKeuangan)
     {
-        $akun = AkunKeuangan::where('user_id', Auth::id())->findOrFail($id);
-        return view('akun-keuangan.show', compact('akun'));
+        $this->authorizeUser($akunKeuangan);
+        return view('akun-keuangan.show', ['akun' => $akunKeuangan]);
     }
 
-    public function edit($id)
+    public function edit(AkunKeuangan $akunKeuangan)
     {
-        $akun = AkunKeuangan::where('user_id', Auth::id())->findOrFail($id);
-        return view('akun-keuangan.edit', compact('akun'));
+        $this->authorizeUser($akunKeuangan);
+        return view('akun-keuangan.edit', ['akun' => $akunKeuangan]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, AkunKeuangan $akunKeuangan)
     {
-        $akun = AkunKeuangan::where('user_id', Auth::id())->findOrFail($id);
+        $this->authorizeUser($akunKeuangan);
 
         $request->validate([
-            'nama_akun' => 'required|string|max:255',
-            'jenis' => 'required|in:tunai,bank,e-wallet',
+            'nama_akun'  => 'required|string|max:255',
+            'jenis'      => 'required|in:tunai,bank,e-wallet',
             'saldo_awal' => 'required|numeric|min:0',
         ]);
 
-        $akun->update([
-            'nama_akun' => $request->nama_akun,
-            'jenis' => $request->jenis,
+        $akunKeuangan->update([
+            'nama_akun'  => $request->nama_akun,
+            'jenis'      => $request->jenis,
             'saldo_awal' => $request->saldo_awal,
         ]);
 
         return redirect()->route('dashboard.akun-keuangan.index')
-            ->with('success', 'Akun berhasil diperbarui!');
+            ->with('success', 'Data akun berhasil diperbarui!');
     }
 
-    public function destroy($id)
+    public function destroy(AkunKeuangan $akunKeuangan)
     {
-        $akun = AkunKeuangan::where('user_id', Auth::id())->findOrFail($id);
+        $this->authorizeUser($akunKeuangan);
 
-        // CEK RELASI: Cegah error Integrity Constraint Violation
-        if ($akun->transaksi()->exists()) {
+        // CEK RELASI: Menggunakan relasi 'transaksi' yang sudah kita buat di Model
+        if ($akunKeuangan->transaksi()->exists()) {
             return redirect()->route('dashboard.akun-keuangan.index')
-                ->with('error', "Gagal hapus! Akun '{$akun->nama_akun}' masih digunakan dalam transaksi.");
+                ->with('error', "Gagal hapus! Akun '{$akunKeuangan->nama_akun}' memiliki riwayat transaksi.");
         }
 
-        $akun->delete();
+        $akunKeuangan->delete();
 
         return redirect()->route('dashboard.akun-keuangan.index')
             ->with('success', 'Akun berhasil dihapus!');
+    }
+
+    /**
+     * Helper untuk memastikan user hanya bisa mengelola datanya sendiri.
+     */
+    private function authorizeUser(AkunKeuangan $akun)
+    {
+        if ($akun->user_id !== Auth::id()) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
     }
 }

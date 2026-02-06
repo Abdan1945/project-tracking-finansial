@@ -11,23 +11,33 @@ class KategoriKeuangan extends Model
 {
     use HasFactory;
 
+    // Nama tabel sesuai di database
     protected $table = 'kategori_keuangan';
 
     protected $fillable = [
-        'user_id',
-        'nama_kategori',
-        'jenis', 
+        'user_id',       // ID User (null jika kategori global/bawaan)
+        'nama_kategori', // Contoh: Gaji, Makanan, Transportasi
+        'jenis',         // Harus: 'pemasukan' atau 'pengeluaran'
+        // 'icon',       // Tambahkan jika Anda menggunakan icon (opsional)
+        // 'warna',      // Tambahkan jika Anda menggunakan warna (opsional)
     ];
 
+    /**
+     * Relasi ke User
+     * Kategori ini dimiliki oleh siapa
+     */
     public function user(): BelongsTo
     {
-        // Laravel secara otomatis mencari class User di namespace yang sama
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Relasi ke Transaksi
+     * Satu kategori bisa dipakai di banyak transaksi
+     */
     public function transaksi(): HasMany
     {
-        // Pastikan file Transaksi.php sudah ada di folder Models
-        return $this->hasMany(Transaksi::class, 'kategori_keuangan_id');
+        // Parameter kedua 'kategori_id' adalah nama kolom di tabel transaksi
+        return $this->hasMany(Transaksi::class, 'kategori_id');
     }
 }

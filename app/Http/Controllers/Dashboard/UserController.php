@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // Tambahkan ini
+use Illuminate\Support\Facades\Auth; // Tambahkan ini
 
 class UserController extends Controller
 {
@@ -14,7 +16,6 @@ class UserController extends Controller
         $text  = "Are you sure you want to delete?";
         confirmDelete($title, $text);
 
-        // UBAH: Gunakan paginate() bukan all() agar method firstItem() dan links() di view bekerja
         $users = User::latest()->paginate(10); 
 
         return view('dashboard.users.index', compact('users'));
@@ -80,12 +81,45 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
 
-        session()->flash("toast_notification", [
-            "level"   => "success",
-            "message" => "Data Berhasil Dihapus",
-        ]);
+        // Keamanan: Jangan biarkan admin menghapus dirinya sendiri
+        if (Auth::id() == $user->id) {
+            session()->flash("toast_notification", [
+                "level"   => "error",
+                "message" => "Anda tidak dapat menghapus akun sendiri!",
+            ]);
+            return redirect()->route('dashboard.users.index');
+        }
+
+        try {
+            // Gunakan Transaction agar jika satu gagal, semua dibatalkan
+            DB::transaction(function () use ($user) {
+                // 1. Hapus semua transaksi melalui relasi akun
+                foreach ($user->akunKeuangan as $akun) {
+                    $akun->transaksi()->delete();
+                }
+
+                // 2. Hapus akun keuangan
+                $user->akunKeuangan()->delete();
+
+                // 3. Hapus kategori keuangan
+                $user->kategoriKeuangan()->delete();
+
+                // 4. Baru hapus user-nya
+                $user->delete();
+            });
+
+            session()->flash("toast_notification", [
+                "level"   => "success",
+                "message" => "User dan seluruh data terkait berhasil dihapus",
+            ]);
+
+        } catch (\Exception $e) {
+            session()->flash("toast_notification", [
+                "level"   => "error",
+                "message" => "Gagal menghapus user: " . $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('dashboard.users.index');
     }
