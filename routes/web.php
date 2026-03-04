@@ -11,7 +11,9 @@ use App\Http\Controllers\Dashboard\{
 };
 
 // Landing Page
-Route::get('/', function () { return view('welcome'); });
+Route::get('/', function () { 
+    return view('welcome'); 
+});
 
 // Laravel Auth Routes (Login, Register, dsb)
 Auth::routes();
@@ -32,10 +34,16 @@ Route::prefix('dashboard')
     // Akses SEMUA USER (Admin & Member)
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::resource('transaksi', TransaksiController::class);
+
+    // ======================
+    // TAMBAHAN EXPORT EXCEL
+    // ======================
+    Route::get('report/transaksi/export', [TransaksiController::class, 'export'])
+        ->name('report.transaksi.export');
+
     Route::resource('akun-keuangan', AkunKeuanganController::class);
 
     // Akses KHUSUS ADMIN
-    // Kita gunakan middleware 'can:admin-only'
     Route::middleware('can:admin-only')->group(function () {
         Route::resource('kategori-keuangan', KategoriKeuanganController::class);
         Route::resource('users', UserController::class);

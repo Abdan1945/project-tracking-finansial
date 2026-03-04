@@ -7,10 +7,16 @@
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Riwayat Transaksi</h2>
             <p class="text-sm text-slate-500 font-medium">Kelola dan pantau semua arus kas keuangan Anda.</p>
         </div>
-        <div>
+        <div class="flex items-center gap-3">
             <a href="{{ route('dashboard.transaksi.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all no-underline">
                 <i class='bx bx-plus text-lg'></i>
                 Tambah Transaksi
+            </a>
+
+            <!-- TAMBAHAN EXPORT EXCEL -->
+            <a href="{{ route('dashboard.report.transaksi.export') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all no-underline">
+                <i class='bx bx-download text-lg'></i>
+                Export Excel
             </a>
         </div>
     </div>
@@ -43,7 +49,6 @@
                                     <i class='bx {{ $t->jenis == 'pemasukan' ? 'bx-trending-up' : 'bx-trending-down' }} text-xl'></i>
                                 </div>
                                 <div>
-                                    {{-- PERBAIKAN: Memanggil kategori_keuangan --}}
                                     <p class="text-sm font-bold text-slate-700 m-0 leading-tight">{{ $t->kategori_keuangan->nama_kategori ?? 'Tanpa Kategori' }}</p>
                                     <span class="text-[10px] font-black uppercase tracking-widest {{ $t->jenis == 'pemasukan' ? 'text-emerald-500' : 'text-rose-400' }}">
                                         {{ $t->jenis }}
@@ -55,7 +60,6 @@
                         <td class="px-8 py-6">
                             <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
                                 <i class='bx bx-credit-card text-slate-500'></i>
-                                {{-- PERBAIKAN: Memanggil akun_keuangan --}}
                                 <span class="text-xs font-bold text-slate-600">{{ $t->akun_keuangan->nama_akun ?? '-' }}</span>
                             </div>
                         </td>

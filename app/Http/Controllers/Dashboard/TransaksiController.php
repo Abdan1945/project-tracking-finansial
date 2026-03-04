@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\{Transaksi, KategoriKeuangan, AkunKeuangan};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
+use Maatwebsite\Excel\Facades\Excel; // ✅ tambahan
+use App\Exports\TransaksiExport;     // ✅ tambahan
 
 class TransaksiController extends Controller
 {
@@ -21,7 +23,6 @@ class TransaksiController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        // Variabel menggunakan $transaksi agar sinkron dengan file Blade Anda
         $transaksi = $query->paginate(10); 
             
         return view('transaksi.index', compact('transaksi', 'isAdmin'));
@@ -128,7 +129,6 @@ class TransaksiController extends Controller
 
         try {
             DB::transaction(function () use ($request, $transaksi) {
-                // Rollback saldo lama
                 $akunLama = AkunKeuangan::findOrFail($transaksi->akun_id);
                 if ($transaksi->jenis == 'pemasukan') {
                     $akunLama->decrement('saldo_awal', $transaksi->jumlah);
@@ -136,7 +136,6 @@ class TransaksiController extends Controller
                     $akunLama->increment('saldo_awal', $transaksi->jumlah);
                 }
 
-                // Update data
                 $transaksi->update([
                     'tanggal'     => $request->tanggal,
                     'jenis'       => $request->jenis,
@@ -146,7 +145,6 @@ class TransaksiController extends Controller
                     'keterangan'  => $request->keterangan,
                 ]);
 
-                // Update saldo baru
                 $akunBaru = AkunKeuangan::findOrFail($request->akun_id);
                 if ($request->jenis == 'pemasukan') {
                     $akunBaru->increment('saldo_awal', $request->jumlah);
@@ -186,5 +184,13 @@ class TransaksiController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }
+    }
+
+    // =========================
+    // ✅ TAMBAHAN EXPORT EXCEL
+    // =========================
+    public function export()
+    {
+        return Excel::download(new TransaksiExport, 'laporan-transaksi.xlsx');
     }
 }
