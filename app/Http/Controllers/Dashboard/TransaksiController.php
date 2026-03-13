@@ -186,9 +186,6 @@ class TransaksiController extends Controller
         }
     }
 
-    // =========================
-    // ✅ TAMBAHAN EXPORT EXCEL
-    // =========================
     public function export()
     {
         return Excel::download(new TransaksiExport, 'laporan-transaksi.xlsx');

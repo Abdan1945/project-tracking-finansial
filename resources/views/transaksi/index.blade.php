@@ -2,25 +2,73 @@
 
 @section('content')
 <div class="space-y-8 animate__animated animate__fadeIn">
+    {{-- Header Section --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Riwayat Transaksi</h2>
-            <p class="text-sm text-slate-500 font-medium">Kelola dan pantau semua arus kas keuangan Anda.</p>
+            <p class="text-sm text-slate-500 font-medium">Pantau arus kas masuk dan keluar secara real-time.</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('dashboard.transaksi.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all no-underline">
                 <i class='bx bx-plus text-lg'></i>
                 Tambah Transaksi
             </a>
-
-            <!-- TAMBAHAN EXPORT EXCEL -->
             <a href="{{ route('dashboard.report.transaksi.export') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all no-underline">
                 <i class='bx bx-download text-lg'></i>
-                Export Excel
+                Export
             </a>
         </div>
     </div>
 
+    {{-- Bitcoin Style Tracking Card --}}
+    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-slate-200 relative overflow-hidden">
+        {{-- Dekorasi Background --}}
+        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
+        
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            {{-- Total Balance --}}
+            <div class="border-r border-slate-800/50">
+                <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-2">Total Saldo (Current Balance)</p>
+                <h2 class="text-4xl font-black tracking-tighter">
+                    <span class="text-indigo-400 text-2xl mr-1">Rp</span>{{ number_format($transaksi->where('jenis', 'pemasukan')->sum('jumlah') - $transaksi->where('jenis', 'pengeluaran')->sum('jumlah'), 0, ',', '.') }}
+                </h2>
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-bold uppercase">
+                        <i class='bx bx-up-arrow-alt'></i> Terpantau
+                    </span>
+                </div>
+            </div>
+
+            {{-- Money In & Out (Bitcoin Style Flow) --}}
+            <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+                {{-- Inflow --}}
+                <div class="bg-white/5 rounded-3xl p-5 border border-white/5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center">
+                            <i class='bx bx-down-arrow-alt text-xl'></i>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Uang Masuk</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-emerald-400">+ Rp {{ number_format($transaksi->where('jenis', 'pemasukan')->sum('jumlah'), 0, ',', '.') }}</h3>
+                </div>
+
+                {{-- Outflow --}}
+                <div class="bg-white/5 rounded-3xl p-5 border border-white/5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center">
+                            <i class='bx bx-up-arrow-alt text-xl'></i>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Uang Keluar</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-rose-400">- Rp {{ number_format($transaksi->where('jenis', 'pengeluaran')->sum('jumlah'), 0, ',', '.') }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    {{-- Table Section --}}
     <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -39,7 +87,7 @@
                         <td class="px-8 py-6">
                             <div class="flex flex-col">
                                 <span class="text-sm font-bold text-slate-700">{{ $t->tanggal->translatedFormat('d M Y') }}</span>
-                                <span class="text-[10px] text-slate-400 font-medium">Input: {{ $t->created_at->format('H:i') }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">{{ $t->created_at->format('H:i') }} WIB</span>
                             </div>
                         </td>
 
